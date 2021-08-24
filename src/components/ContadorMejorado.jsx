@@ -1,33 +1,11 @@
 import React, { useState, useReducer } from 'react';
+import { TYPES } from '../actions/contador.actions';
 
-const initialState = { contador: 0 };
-
-const init = initialState => ({ contador: initialState.contador + 100 });
-
-const TYPES = {
-	increment: 'INCREMENT',
-	decrement: 'DECREMENT',
-	increment5: 'INCREMENT_5',
-	decrement5: 'DECREMENT_5',
-	reset: 'RESET',
-};
-
-function reducer(state, action) {
-	switch (action.type) {
-		case TYPES.increment:
-			return { contador: state.contador + 1 };
-		case TYPES.increment5:
-			return { contador: state.contador + action.payload };
-		case TYPES.decrement:
-			return { contador: state.contador - 1 };
-		case TYPES.decrement5:
-			return { contador: state.contador - action.payload };
-		case TYPES.reset:
-			return initialState;
-		default:
-			return state;
-	}
-}
+import {
+	contadorInit as init,
+	contadorInitialState as initialState,
+	contadorReducer as reducer,
+} from '../reducers/contador.reducer';
 
 const ContadorMejorado = () => {
 	const [state, dispatch] = useReducer(reducer, initialState, init);

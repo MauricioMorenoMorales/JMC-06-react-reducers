@@ -12,7 +12,7 @@ const TYPES = {
 	reset: 'RESET',
 };
 
-function reducer(state, action) {
+const reducer = function (state, action) {
 	switch (action.type) {
 		case TYPES.increment:
 			return { contador: state.contador + 1 };
@@ -27,7 +27,7 @@ function reducer(state, action) {
 		default:
 			return state;
 	}
-}
+};
 
 const Contador = () => {
 	const [state, dispatch] = useReducer(reducer, initialState, init);
@@ -37,6 +37,7 @@ const Contador = () => {
 	const restar = () => dispatch({ type: TYPES.decrement });
 	const restar5 = () => dispatch({ type: TYPES.decrement5, payload: 5 });
 	const reset = () => dispatch({ type: TYPES.reset });
+
 	return (
 		<div style={{ textAlign: 'center' }}>
 			<h2>Contador Reducer</h2>
