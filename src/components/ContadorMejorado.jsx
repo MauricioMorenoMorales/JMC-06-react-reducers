@@ -29,7 +29,7 @@ function reducer(state, action) {
 	}
 }
 
-const Contador = () => {
+const ContadorMejorado = () => {
 	const [state, dispatch] = useReducer(reducer, initialState, init);
 
 	const sumar = () => dispatch({ type: TYPES.increment });
@@ -39,7 +39,7 @@ const Contador = () => {
 	const reset = () => dispatch({ type: TYPES.reset });
 	return (
 		<div style={{ textAlign: 'center' }}>
-			<h2>Contador Reducer</h2>
+			<h2>Contador Mejorado</h2>
 			<nav>
 				<button onClick={sumar5}>+5</button>
 				<button onClick={sumar}>+</button>
@@ -52,4 +52,4 @@ const Contador = () => {
 	);
 };
 
-export default Contador;
+export default ContadorMejorado;
