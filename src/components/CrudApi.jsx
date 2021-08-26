@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
+import { TYPES } from '../actions/crudActions';
 import { helpHttp } from '../helpers/helpHttp';
+import { crudInitialState, crudReducer } from '../reducers/crudReducer';
 
 import CrudForm from './CrudForm';
 import CrudTable from './CrudTable';
@@ -7,10 +9,12 @@ import Loader from './Loader';
 import Message from './Message';
 
 const CrudApi = () => {
-	const [db, setDb] = useState(null),
-		[dataToEdit, setDataToEdit] = useState(null), // Is used in the <form /> and is activated on the component <crudTable />
-		[error, setError] = useState(null),
-		[loading, setLoading] = useState(true);
+	// const [db, setDb] = useState(null);
+	const [state, dispatch] = useReducer(crudReducer, crudInitialState);
+	const { db } = state;
+	const [dataToEdit, setDataToEdit] = useState(null); // Is used in the <form /> and is activated on the component <crudTable />
+	const [error, setError] = useState(null);
+	const [loading, setLoading] = useState(true);
 
 	const api = helpHttp();
 	let url = 'http://localhost:3333/santos';
@@ -21,10 +25,10 @@ const CrudApi = () => {
 			.get(url)
 			.then(res => {
 				if (!res.err) {
-					setDb(res);
+					dispatch({ type: TYPES.READ_ALL_DATA, payload: res });
 					setError(null);
 				} else {
-					setDb(null);
+					dispatch({ type: TYPES.NO_DATA });
 					setError(res);
 				}
 			});
@@ -43,13 +47,13 @@ const CrudApi = () => {
 		api.post(url, options).then(fetchResponse => {
 			console.log(fetchResponse);
 			if (!fetchResponse.err) {
-				setDb([...db, fetchResponse]);
+				dispatch({ type: TYPES.CREATE_DATA, payload: fetchResponse });
 			} else {
 				setError(fetchResponse);
 			}
 		});
 
-		setDb([...db, data]);
+		// setDb([...db, data]);
 	}; //!||
 	const updateData = data => {
 		const endPoint = `${url}/${data.id}`;
@@ -59,10 +63,7 @@ const CrudApi = () => {
 		};
 		api.put(endPoint, options).then(postResponse => {
 			if (!postResponse.err) {
-				let newData = db.map(element =>
-					element.id === data.id ? data : element,
-				);
-				setDb(newData);
+				dispatch({ type: TYPES.UPDATE_DATA, payload: postResponse });
 			} else {
 				setError(postResponse);
 			}
@@ -79,14 +80,13 @@ const CrudApi = () => {
 			};
 			api.del(endPoint, options).then(deleteResponse => {
 				if (!deleteResponse.err) {
-					const newData = db.filter(element => element.id !== id);
-					setDb(newData);
+					dispatch({ type: TYPES.DELETE_DATA, payload: id });
 				} else {
 					setError(deleteResponse);
 				}
 			});
 			const newData = db.filter(element => element.id !== id);
-			setDb(newData);
+			// setDb(newData);
 		} else {
 			return;
 		}
