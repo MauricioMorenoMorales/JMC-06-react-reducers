@@ -9,7 +9,6 @@ import Loader from './Loader';
 import Message from './Message';
 
 const CrudApi = () => {
-	// const [db, setDb] = useState(null);
 	const [state, dispatch] = useReducer(crudReducer, crudInitialState);
 	const { db } = state;
 	const [dataToEdit, setDataToEdit] = useState(null); // Is used in the <form /> and is activated on the component <crudTable />
@@ -35,40 +34,36 @@ const CrudApi = () => {
 		setLoading(false);
 	}, [url]);
 
-	//Here you have the crud functions create update delete, but not get that is default
-	//Create data inside the component <CrudForm />
 	const createData = data => {
 		data.id = Date.now();
 		const options = {
 			body: data,
 			headers: { 'content-type': 'application/json' },
 		};
+		api
+			.post(url, options)
+			.then(fetchResponse =>
+				!fetchResponse.err
+					? dispatch({ type: TYPES.CREATE_DATA, payload: fetchResponse })
+					: setError(fetchResponse),
+			);
+	};
 
-		api.post(url, options).then(fetchResponse => {
-			console.log(fetchResponse);
-			if (!fetchResponse.err) {
-				dispatch({ type: TYPES.CREATE_DATA, payload: fetchResponse });
-			} else {
-				setError(fetchResponse);
-			}
-		});
-
-		// setDb([...db, data]);
-	}; //!||
 	const updateData = data => {
 		const endPoint = `${url}/${data.id}`;
 		const options = {
 			body: data,
 			headers: { 'content-type': 'application/json' },
 		};
-		api.put(endPoint, options).then(postResponse => {
-			if (!postResponse.err) {
-				dispatch({ type: TYPES.UPDATE_DATA, payload: postResponse });
-			} else {
-				setError(postResponse);
-			}
-		});
-	}; //!||
+		api
+			.put(endPoint, options)
+			.then(postResponse =>
+				!postResponse.err
+					? dispatch({ type: TYPES.UPDATE_DATA, payload: postResponse })
+					: setError(postResponse),
+			);
+	};
+
 	const deleteData = id => {
 		let isDelete = window.confirm(
 			`¿Estás seguro de eliminar el registro con el id? ${id}`,
@@ -78,15 +73,13 @@ const CrudApi = () => {
 			const options = {
 				headers: { 'content-type': 'application/json' },
 			};
-			api.del(endPoint, options).then(deleteResponse => {
-				if (!deleteResponse.err) {
-					dispatch({ type: TYPES.DELETE_DATA, payload: id });
-				} else {
-					setError(deleteResponse);
-				}
-			});
-			const newData = db.filter(element => element.id !== id);
-			// setDb(newData);
+			api
+				.del(endPoint, options)
+				.then(deleteResponse =>
+					!deleteResponse.err
+						? dispatch({ type: TYPES.DELETE_DATA, payload: id })
+						: setError(deleteResponse),
+				);
 		} else {
 			return;
 		}
