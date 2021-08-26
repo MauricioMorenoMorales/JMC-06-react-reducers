@@ -9,6 +9,10 @@ const CardItem = ({ data, deleteFromCart }) => {
 				${price}.00 x {quantity} = ${price * quantity}.00
 			</h5>
 			<button onClick={() => deleteFromCart(id)}>Eliminar</button>
+			<br />
+			<button onClick={() => deleteFromCart(id, true)}>Eliminar Todos</button>
+			<br />
+			<br />
 		</div>
 	);
 };
